@@ -10,15 +10,6 @@ die() {
 	bbfatal_log "$*"
 }
 
-oe_runmake_call() {
-	bbnote ${MAKE} ${EXTRA_OEMAKE} "$@"
-	${MAKE} ${EXTRA_OEMAKE} "$@"
-}
-
-oe_runmake() {
-	oe_runmake_call "$@" || die "oe_runmake failed"
-}
-
 FILESPATH = "${@base_set_filespath(["${FILE_DIRNAME}/${BP}", "${FILE_DIRNAME}/${BPN}", "${FILE_DIRNAME}/files"], d)}"
 # THISDIR only works properly with imediate expansion as it has to run
 # in the context of the location its used (:=)
@@ -40,4 +31,19 @@ python base_do_fetch() {
         bb.fatal(str(e))
 }
 
-EXPORT_FUNCTIONS do_fetch
+addtask unpack
+do_unpack[dirs] = "${WORKDIR}"
+
+python base_do_unpack() {
+    src_uri = (d.getVar('SRC_URI', True) or "").split()
+    if len(src_uri) == 0:
+        return
+
+    try:
+        fetcher = bb.fetch2.Fetch(src_uri, d)
+        fetcher.unpack(d.getVar('WORKDIR', True))
+    except bb.fetch2.BBFetchException as e:
+        bb.fatal(str(e))
+}
+
+EXPORT_FUNCTIONS do_fetch do_unpack
