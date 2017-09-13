@@ -1,0 +1,15 @@
+Install the following host-tools:
+
+$ apt-get install python3-elbe-buildenv elbe
+
+I used it in a poky / morty checkout.
+
+$ git clone http://git.yoctoproject.org/git/poky
+$ mv nneta-elbe poky
+$ mv nneta-elbe-ext poky
+$ cd poky
+$ git reset --hard 924e576b8930fd2268d85f0b151e5f68a3c2afce
+$ TEMPLATECONF=nneta-elbe . ./oe-init-build-env build-elbe
+$ elbe initvm create
+$ elbe initvm start
+$ bitbake simple-image

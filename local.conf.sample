@@ -1,0 +1,4 @@
+MACHINE = "mymachine"
+DISTRO = "stretch"
+USER_CLASSES = "elbe"
+CONF_VERSION = "1"
