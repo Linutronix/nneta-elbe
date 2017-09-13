@@ -30,8 +30,7 @@ python base_do_fetch() {
     except bb.fetch2.BBFetchException as e:
         bb.fatal(str(e))
 }
-
-addtask unpack
+addtask unpack after do_fetch
 do_unpack[dirs] = "${WORKDIR}"
 
 python base_do_unpack() {
