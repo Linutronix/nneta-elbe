@@ -1,12 +1,10 @@
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
 	<project>
-		<!-- human readable description of the project -->
-		<name>image</name>
+		<name>${arch}-${distro}-image</name>
 		<version>1.0</version>
 		<description>
-			debian stretch rootfs for beaglebone black
+			debian ${distro} rootfs for beaglebone black
 		</description>
-		<!-- buildtype is used to configure qemu-user and debian arch -->
 		<buildtype>${arch}</buildtype>
 		<mirror>
 			<!-- primary mirror is used by debootstrap -->
@@ -14,16 +12,16 @@
 			<primary_path>/debian</primary_path>
 			<primary_proto>http</primary_proto>
 		</mirror>
-		<suite>stretch</suite>
+		<suite>${distro}</suite>
 	</project>
 	<target>
-		<hostname>lxbbb</hostname>
+		<hostname>elbe</hostname>
 		<domain>linutronix.de</domain>
 		<passwd>foo</passwd>
 		<console>${serial}</console>
 		<package>
 			<tar>
-				<name>bbb.tgz</name>
+				<name>${arch}-${distro}-${machine}.tgz</name>
 			</tar>
 		</package>
 		<norecommend />

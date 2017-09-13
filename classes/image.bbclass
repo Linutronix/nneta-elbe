@@ -28,6 +28,8 @@ python do_rootfs() {
         pkgs = ""
     r = { "pkgs": pkgs.split(),
           "arch": d.getVar("PACKAGE_ARCH", True),
+          "distro": d.getVar("DISTRO", True),
+          "machine": d.getVar("MACHINE", True),
           "serial": d.getVar("SERIAL_CONSOLE", True)}
 
     idirs = d.getVar("BBINCLUDED", True).split()
@@ -41,6 +43,7 @@ python do_rootfs() {
     srcxml = workdir + "/source.xml"
 
     bb.note("arch: "+str(d.getVar('PACKAGE_ARCH', True)))
+    bb.note("distro: "+str(d.getVar('DISTRO', True)))
     bb.note("mako: "+srcxmlmako)
     bb.note("xml : "+srcxml)
 
