@@ -1,15 +1,19 @@
 Install the following host-tools:
 
+$ echo "deb http://debian.linutronix.de/elbe stretch main" > /etc/apt/sources.list.d/elbe.list
+$ echo "deb http://debian.linutronix.de/elbe-common stretch main" >> /etc/apt/sources.list.d/elbe.list
+$ wget -q -O - http://debian.linutronix.de/elbe-common/elbe-repo.pub | apt-key add -
+$ apt-get update
 $ apt-get install python3-elbe-buildenv elbe
 
 I used it in a poky / morty checkout.
 
 $ git clone http://git.yoctoproject.org/git/poky
-$ mv nneta-elbe poky
-$ mv nneta-elbe-ext poky
 $ cd poky
 $ git reset --hard 924e576b8930fd2268d85f0b151e5f68a3c2afce
-$ TEMPLATECONF=nneta-elbe . ./oe-init-build-env build-elbe
+$ git clone https://github.com/Linutronix/nneta-elbe
+$ git clone https://github.com/Linutronix/nneta-elbe-ext
+$ TEMPLATECONF=nneta-elbe/conf . ./oe-init-build-env build-elbe
 $ elbe initvm create
 $ elbe initvm start
 $ bitbake simple-image
