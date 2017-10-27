@@ -16,4 +16,7 @@ $ git clone https://github.com/Linutronix/nneta-elbe-ext
 $ TEMPLATECONF=nneta-elbe/conf . ./oe-init-build-env build-elbe
 $ elbe initvm create
 $ elbe initvm start
+# for building just one package
+$ bitbake hello
+# for building complete image
 $ bitbake simple-image
