@@ -1,5 +1,6 @@
 
 inherit elbebase
+inherit elbeupload
 
 IMAGE_INSTALL ?= ""
 IMAGE_INSTALL[type] = "list"
@@ -36,13 +37,5 @@ do_rootfs () {
     ${ELBE_BIN} control get_files --output=${DEPLOY_DIR_IMAGE} $EPROJECT
 }
 
-addtask rootfs before do_build after do_setup
+addtask rootfs before do_build after do_upload_debs
 
-python () {
-    d.appendVarFlag('do_rootfs', 'depends', " %s:do_build" % d.getVar('ELBE_PBUILDER_PROJECT', True))
-    deps = d.getVar('PACKAGE_BUILD', True)
-    if not deps:
-        deps = ""
-    for dep in deps.split():
-        d.appendVarFlag('do_rootfs', 'depends', " %s:do_build" % dep)
-}
