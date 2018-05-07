@@ -8,6 +8,7 @@
 	if not postprocess:
 		postprocess = ""
 	postprocess = postprocess.splitlines()
+	postprocess = [i.strip() for i in postprocess]
 
 	urllist = d.getVar('ELBE_URLLIST', True)
 	if not urllist:
