@@ -20,7 +20,11 @@ do_compile () {
         git repack -a
     fi
     EPROJECT=`cat ${WORKDIR}/../../../${BUILD_SYS}/${ELBE_PBUILDER_PROJECT}/1.0-r0/eproject`
-    ${ELBE_BIN} pbuilder build --project=$EPROJECT
+    if [ -f "${ORIG_FILE}" ]; then
+        ${ELBE_BIN} pbuilder build --project=$EPROJECT --origfile="${ORIG_FILE}"
+    else
+        ${ELBE_BIN} pbuilder build --project=$EPROJECT
+    fi
     ${ELBE_BIN} control wait_busy $EPROJECT
     cd ${WORKDIR}
     FILES=`${ELBE_BIN} prjrepo download $EPROJECT`
