@@ -77,8 +77,17 @@
 		</finetuning>
 		<pkg-list>
 		%for p in pkgs:
-			<pkg>${p}</pkg>
+			${pkg(p)}
 		%endfor
 		</pkg-list>
 	</target>
 </ns0:RootFileSystem>
+<%def name="pkg(p)">\
+% if p.find('=') != -1:
+<pkg version="${p.split('=')[1]}">${p.split('=')[0]}</pkg>\
+% elif p.find('/') != -1:
+<pkg pin="${p.split('/')[1]}">${p.split('/')[0]}</pkg>\
+% else:
+<pkg>${p}</pkg>\
+% endif
+</%def>
