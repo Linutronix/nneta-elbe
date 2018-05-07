@@ -1,5 +1,0 @@
-MACHINE = "mymachine"
-DISTRO = "stretch"
-USER_CLASSES = "elbe"
-CONF_VERSION = "1"
-DL_DIR = "${TOPDIR}/downloads"
