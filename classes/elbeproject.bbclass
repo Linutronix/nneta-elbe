@@ -10,9 +10,7 @@ python do_configure() {
 
 do_compile() {
     cd ${WORKDIR}
-    if ! [ -f eproject ]; then
-      ${ELBE_BIN} control create_project > eproject
-    fi
+    ${ELBE_BIN} control create_project > eproject
     EPROJECT=`cat eproject`
     ${ELBE_BIN} control set_xml $EPROJECT elbeproject.xml
     ${ELBE_BIN} pbuilder create --project $EPROJECT
