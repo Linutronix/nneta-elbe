@@ -1,1 +1,3 @@
 inherit elbeproject
+
+LICENSE="MIT"
