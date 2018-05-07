@@ -18,6 +18,8 @@ do_compile() {
 
 addtask compile before do_build
 
+do_compile[depends] += "initvm:do_build"
+
 do_fetch[noexec] = "1"
 do_unpack[noexec] = "1"
 do_patch[noexec] = "1"
