@@ -73,7 +73,7 @@
 			<rm>/var/cache/apt/*.bin</rm>
 			<rm>/var/lib/apt/lists/ftp*</rm>
                         %for p in postprocess:
-				<command>${p}</command>
+				${finetuning(p)}
                         %endfor
 		</finetuning>
 		<pkg-list>
@@ -90,5 +90,70 @@
 <pkg pin="${p.split('/')[1]}">${p.split('/')[0]}</pkg>\
 % else:
 <pkg>${p}</pkg>\
+% endif
+</%def>
+<%def name="finetuning(p)">\
+% if p.startswith("image_useradd"):
+<%
+	# shlex does shell like parsing
+	import shlex
+	from argparse import ArgumentParser
+	params = shlex.split(p)
+
+	ap = ArgumentParser(add_help=False)
+	ap.add_argument('-u', '--uid')
+	ap.add_argument('-g', '--gid')
+	ap.add_argument('-G', '--groups')
+	ap.add_argument('-s', '--shell', default='/bin/sh')
+	ap.add_argument('-d', '--home-dir')
+	ap.add_argument('-r', '--system', action='store_true', default=False)
+
+	useradd_args = shlex.split(params[2])
+	args = ap.parse_args(useradd_args)
+%>
+<adduser\
+%  if args.groups:
+ groups="${args.groups}"\
+%  endif
+%  if args.uid:
+ uid="${args.uid}"\
+%  endif
+%  if args.gid:
+ gid="${args.gid}"\
+%  endif
+%  if args.home_dir:
+ home="${args.home_dir}"\
+%  endif
+%  if args.system:
+ system="true"\
+%  endif
+%  if len(params) > 3:
+ passwd="${params[3]}"\
+%  endif
+ shell="${args.shell}">${params[1]}</adduser>\
+% elif p.startswith("image_groupadd"):
+<%
+	# shlex does shell like parsing
+	import shlex
+	from argparse import ArgumentParser
+	params = shlex.split(p)
+
+	ap = ArgumentParser(add_help=False)
+	ap.add_argument('-g', '--gid', type=int)
+	ap.add_argument('-r', '--system', action='store_true', default=False)
+
+	groupadd_args = shlex.split(params[2])
+	args = ap.parse_args(groupadd_args)
+%>
+<addgroup\
+%  if args.gid:
+ gid="${args.gid}"\
+%  endif
+%  if args.system:
+ system="true"\
+%  endif
+>${params[1]}</addgroup>\
+% else:
+<command>${p | h}</command>\
 % endif
 </%def>
