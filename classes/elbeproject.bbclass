@@ -1,57 +1,28 @@
-python do_createxml() {
-    from elbepack.config import cfg
-    from elbepack.soapclient import ElbeSoapClient, ClientAction
-    from elbepack.templates import write_template
 
-    r = { "pkgs": "",
-          "arch": d.getVar("PACKAGE_ARCH", True),
-          "distro": d.getVar("DISTRO", True),
-          "machine": d.getVar("MACHINE", True),
-          "serial": d.getVar("SERIAL_CONSOLE", True)}
+inherit elbebase
 
-    idirs = d.getVar("BBINCLUDED", True).split()
-    for id in idirs:
-      if str(id).endswith('nneta-elbe/classes/elbeproject.bbclass'):
-        imgbbclass = str(id)
+export ELBE_USER
+export ELBE_PASS
 
-    workdir = str(d.getVar("WORKDIR", True))
-
-    srcxmlmako = imgbbclass.replace('elbeproject.bbclass', 'source.xml.mako')
-    srcxml = workdir + "/source.xml"
-
-    bb.note("arch: "+str(d.getVar('PACKAGE_ARCH', True)))
-    bb.note("distro: "+str(d.getVar('DISTRO', True)))
-    bb.note("mako: "+srcxmlmako)
-    bb.note("xml : "+srcxml)
-
-    write_template(srcxml, srcxmlmako, r)
+python do_configure() {
+    write_mako_template(d, "elbeproject.xml")
 }
-addtask createxml before do_build
 
-do_createproject() {
+do_compile() {
     cd ${WORKDIR}
     if ! [ -f eproject ]; then
-      elbe control create_project > eproject
+      ${ELBE_BIN} control create_project > eproject
     fi
     EPROJECT=`cat eproject`
-    elbe control set_xml $EPROJECT source.xml
+    ${ELBE_BIN} control set_xml $EPROJECT elbeproject.xml
+    ${ELBE_BIN} pbuilder create --project $EPROJECT
 }
-addtask createproject after do_createxml
-do_createproject[depends] = "elbeproject:do_createxml"
 
-do_createpbuilder() {
-    cd ${WORKDIR}
-    EPROJECT=`cat eproject`
-    elbe pbuilder create --project $EPROJECT
-}
-addtask createpbuilder after do_createproject
-do_createpbuilder[depends] = "elbeproject:do_createproject"
+addtask compile before do_build
 
 do_fetch[noexec] = "1"
 do_unpack[noexec] = "1"
 do_patch[noexec] = "1"
-do_configure[noexec] = "1"
-do_compile[noexec] = "1"
 do_install[noexec] = "1"
 do_populate_sysroot[noexec] = "1"
 do_package[noexec] = "1"

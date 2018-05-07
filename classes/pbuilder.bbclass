@@ -1,22 +1,35 @@
-do_build () {
-    cd ${WORKDIR}/../../elbeproject/1.0-r0
-    EPROJECT=`cat eproject`
+
+inherit elbebase
+
+export ELBE_USER
+export ELBE_PASS
+
+python () {
+    d.appendVarFlag('do_compile', 'depends', " %s:do_build" % d.getVar('ELBE_PBUILDER_PROJECT', True))
+}
+
+do_compile () {
     cd ${S}
-    elbe pbuilder build --project=$EPROJECT
-    elbe control wait_busy $EPROJECT
+    EPROJECT=`cat ${WORKDIR}/../../${ELBE_PBUILDER_PROJECT}/1.0-r0/eproject`
+    ${ELBE_BIN} pbuilder build --project=$EPROJECT
+    ${ELBE_BIN} control wait_busy $EPROJECT
     cd ${WORKDIR}
-    FILES=`elbe prjrepo download $EPROJECT`
+    FILES=`${ELBE_BIN} prjrepo download $EPROJECT`
     mkdir -p ${DEPLOY_DIR_DEB}
     for f in $FILES; do
         if [ -f $f ]; then tar xvf $f --strip-components=1 -C ${DEPLOY_DIR_DEB}; fi
     done
 }
 
-addtask build after do_unpack
-do_build[depends] += "elbeproject:do_createpbuilder"
+addtask compile before do_build after do_patch
 
-do_populate_sysroot() {
-    echo 'nothing to do'
-}
-addtask populate_sysroot after do_build
-do_populate_sysroot[depends] = "${PN}:do_build"
+do_configure[noexec] = "1"
+do_install[noexec] = "1"
+do_populate_sysroot[noexec] = "1"
+do_package[noexec] = "1"
+do_package_qa[noexec] = "1"
+do_packagedata[noexec] = "1"
+do_package_write_ipk[noexec] = "1"
+do_package_write_deb[noexec] = "1"
+do_package_write_rpm[noexec] = "1"
+do_populate_lic[noexec] = "1"
