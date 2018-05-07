@@ -10,7 +10,7 @@ python () {
 
 do_compile () {
     cd ${S}
-    EPROJECT=`cat ${WORKDIR}/../../${ELBE_PBUILDER_PROJECT}/1.0-r0/eproject`
+    EPROJECT=`cat ${WORKDIR}/../../../${BUILD_SYS}/${ELBE_PBUILDER_PROJECT}/1.0-r0/eproject`
     ${ELBE_BIN} pbuilder build --project=$EPROJECT
     ${ELBE_BIN} control wait_busy $EPROJECT
     cd ${WORKDIR}

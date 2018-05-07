@@ -1,5 +1,6 @@
 
 inherit elbebase
+inherit native
 
 export ELBE_USER
 export ELBE_PASS

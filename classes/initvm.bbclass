@@ -1,5 +1,6 @@
 
 inherit elbebase
+inherit native
 
 ELBE_INITVM_PRIMARY_HOST ?= "${ELBE_PRIMARY_HOST}"
 ELBE_INITVM_PRIMARY_PATH ?= "${ELBE_PRIMARY_PATH}"
