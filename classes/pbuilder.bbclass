@@ -14,6 +14,11 @@ INHIBIT_DEFAULT_DEPS = "1"
 
 do_compile () {
     cd ${S}
+    # source format git requires, that the git repo
+    # does not reference any externals
+    if grep -q git debian/source/format; then
+        git repack -a
+    fi
     EPROJECT=`cat ${WORKDIR}/../../../${BUILD_SYS}/${ELBE_PBUILDER_PROJECT}/1.0-r0/eproject`
     ${ELBE_BIN} pbuilder build --project=$EPROJECT
     ${ELBE_BIN} control wait_busy $EPROJECT
