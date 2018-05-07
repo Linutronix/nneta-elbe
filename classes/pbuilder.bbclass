@@ -4,6 +4,13 @@ inherit elbebase
 export ELBE_USER
 export ELBE_PASS
 
+# poky base.bbclass normally pulls in:
+# "virtual/arm-oe-linux-gnueabi-gcc virtual/arm-oe-linux-gnueabi-compilerlibs virtual/libc"
+#
+# we dont need these for elbe pbuilder builds.
+
+INHIBIT_DEFAULT_DEPS = "1"
+
 python () {
     d.appendVarFlag('do_compile', 'depends', " %s:do_build" % d.getVar('ELBE_PBUILDER_PROJECT', True))
 }

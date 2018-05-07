@@ -7,6 +7,17 @@ IMAGE_INSTALL[type] = "list"
 # Images are generally built explicitly, do not need to be part of world.
 EXCLUDE_FROM_WORLD = "1"
 
+# poky base.bbclass normally pulls in:
+# "virtual/arm-oe-linux-gnueabi-gcc virtual/arm-oe-linux-gnueabi-compilerlibs virtual/libc"
+#
+# we dont need these for elbe pbuilder builds.
+
+INHIBIT_DEFAULT_DEPS = "1"
+
+# PACKAGES comes from poky/conf/bitbake.conf
+# we dont want any packages here.
+PACKAGES = ""
+
 export ELBE_USER
 export ELBE_PASS
 
