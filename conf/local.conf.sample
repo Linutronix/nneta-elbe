@@ -1,0 +1,102 @@
+#
+# This file is your local configuration file and is where all local user settings
+# are placed. The comments in this file give some guide to the options a new user
+# to the system might want to change but pretty much any configuration option can
+# be set in this file. More adventurous users can look at local.conf.extended
+# which contains other examples of configuration which can be placed in this file
+# but new users likely won't need any of them initially.
+#
+# Lines starting with the '#' character are commented out and in some cases the
+# default values are provided as comments to show people example syntax. Enabling
+# the option is a question of removing the # character and making any change to the
+# variable as required.
+
+# 
+# This file only describes Variables concerning nneta-elbe
+# since this can be mixed with poky, it might make sense to
+# look at poky/meta-poky/conf/local.conf.sample or
+# poky/meta-poky/conf/local.conf.extended
+#
+
+#
+# Machine Selection
+#
+# nneta-elbe carries an example machine mymachine
+# in conf/machine/mymachine.conf
+#
+# select that for now, and define your own in your
+# custom layer.
+#
+MACHINE = "mymachine"
+
+#
+# Default policy config
+#
+# The distribution setting controls which policy settings are used as defaults.
+# For nneta-elbe this mainly defines which mirrors are used as package sources.
+#
+# When poky Features are used, the relvant ones need to be specified.
+# nneta-elbe currently comes with jessie and stretch.
+#
+DISTRO ?= "stretch"
+
+#
+# Package Management configuration
+#
+# This variable lists which packaging formats to enable. Multiple package backends
+# can be enabled at once and the first item listed in the variable will be used
+# to generate the root filesystems.
+# Options are:
+#  - 'package_deb' for debian style deb files
+#  - 'package_ipk' for ipk files are used by opkg (a debian style embedded package manager)
+#  - 'package_rpm' for rpm style packages
+# E.g.: PACKAGE_CLASSES ?= "package_rpm package_deb package_ipk"
+# 
+# nneta-elbe needs "package_deb", because yocto built packages can be uploaded
+# into the initvm, and therefor deb format is mandatory. 
+#
+PACKAGE_CLASSES = "package_deb"
+
+#
+# SDK target architecture
+#
+# This variable specifies the architecture to build SDK items for and means
+# you can build the SDK packages for architectures other than the machine you are
+# running the build on (i.e. building i686 packages on an x86_64 host).
+# Supported values are i686 and x86_64
+#SDKMACHINE ?= "i686"
+
+# CONF_VERSION is increased each time build/conf/ changes incompatibly and is used to
+# track the version of this file when it was generated. This can safely be ignored if
+# this doesn't mean anything to you.
+CONF_VERSION = "1"
+
+#
+# Configure elbe executable to use
+#
+# ELBE_BIN defaults to 'elbe' to use the systemwide installed elbe version.
+# it might make sense to set
+#
+# ELBE_BIN = "/usr/local/bin/elbe"
+#
+# to use a development version of elbe, it is necessary to specify 
+# ELBE_BIN_WORKDIR and ELBE_INITVM_EXTRA_OPTS
+# 
+# ELBE_BIN = "/home/torbenh/elbe/elbe"
+# ELBE_BIN_WORKDIR = "/home/torbenh/elbe"
+# ELBE_INITVM_EXTRA_OPTS = "--devel"
+#
+# the default setting should work for most people, not doing elbe development.
+#
+# ELBE_BIN = "elbe"
+
+
+# 
+# Number of Bitbake Threads
+#
+# Elbe currently does not support parallel pbuilds per elbe project and user.
+# This setting has to remain at 1 in order to prevent failures, which would
+# result from busy projects on paralllel build.
+#
+BB_NUMBER_THREADS = "1"
+
