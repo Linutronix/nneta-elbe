@@ -52,6 +52,8 @@
 		<conf owner="pbuilder" key="pbuilder/mirrorsite" type="string" value="http://${d.getVar('ELBE_INITVM_PRIMARY_HOST', True)}${d.getVar('ELBE_INITVM_PRIMARY_PATH', True)}"/>
 		</preseed>
 		<size>${d.getVar('ELBE_INITVM_SIZE', True)}</size>
+		<mem>${d.getVar('ELBE_INITVM_MEM', True)}</mem>
+		<swap-size>${d.getVar('ELBE_INITVM_SWAP_SIZE', True)}</swap-size>
 		<img>qcow2</img>
 		<portforwarding>
 			<forward>
