@@ -12,6 +12,8 @@ export ELBE_PASS
 
 INHIBIT_DEFAULT_DEPS = "1"
 
+ELBE_PBUILDER_EXTRA_OPTS ?= ""
+
 do_compile () {
     cd ${S}
     # source format git requires, that the git repo
@@ -21,9 +23,9 @@ do_compile () {
     fi
     EPROJECT=`cat ${WORKDIR}/../../../${BUILD_SYS}/${ELBE_PBUILDER_PROJECT}/1.0-r0/eproject`
     if [ -f "${ORIG_FILE}" ]; then
-        ${ELBE_BIN} pbuilder build --project=$EPROJECT --origfile="${ORIG_FILE}"
+        ${ELBE_BIN} pbuilder build --project=$EPROJECT --origfile="${ORIG_FILE}" ${ELBE_PBUILDER_EXTRA_OPTS}
     else
-        ${ELBE_BIN} pbuilder build --project=$EPROJECT
+        ${ELBE_BIN} pbuilder build --project=$EPROJECT ${ELBE_PBUILDER_EXTRA_OPTS}
     fi
     ${ELBE_BIN} control wait_busy $EPROJECT
     cd ${WORKDIR}
