@@ -37,5 +37,5 @@ do_rootfs () {
     ${ELBE_BIN} control get_files --output=${DEPLOY_DIR_IMAGE} $EPROJECT
 }
 
-addtask rootfs before do_build after do_upload_debs
+addtask rootfs before do_build after do_upload_debs do_setup
 
