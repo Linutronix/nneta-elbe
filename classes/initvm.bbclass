@@ -17,6 +17,13 @@ python do_configure() {
 
 addtask configure before do_build
 
+do_initvm_start() {
+    if [ -d ${ELBE_BIN_WORKDIR} ]; then
+        cd ${ELBE_BIN_WORKDIR}
+    fi
+    ${ELBE_BIN} initvm start
+}
+
 do_initvm_create() {
     if [ -d ${ELBE_BIN_WORKDIR} ]; then 
         cd ${ELBE_BIN_WORKDIR}
@@ -40,6 +47,9 @@ python do_compile() {
 
     if not os.path.exists(initvm_stampfile):
         bb.build.exec_func("do_initvm_create", d)
+    else:
+        bb.build.exec_func("do_initvm_start", d)
+
 
     bb.utils.unlockfile(lf)
 }
