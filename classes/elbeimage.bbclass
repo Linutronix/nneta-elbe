@@ -26,7 +26,7 @@ python do_setup () {
     write_mako_template(d, "elbeproject.xml")
 }
 
-addtask setup before do_build
+addtask setup before do_build after do_patch
 
 do_rootfs () {
     EPROJECT=`cat ${WORKDIR}/../../../${BUILD_SYS}/${ELBE_PBUILDER_PROJECT}/1.0-r0/eproject`
