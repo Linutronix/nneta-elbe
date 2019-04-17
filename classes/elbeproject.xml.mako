@@ -22,6 +22,56 @@
 			bb.error('%s: or without key: "http://security.debian.org/,jessie/updates,main"' % d.getVar('PN', True))
 			raise bb.BBHandledException()
 		url_and_keys.append(u_split)
+
+	pn = d.getVar('PN', True)
+
+	packages_name_prefix = "{}-{}-{}".format(
+					d.getVar("ELBE_PACKAGE_ARCH", True),
+					d.getVar("ELBE_DISTRO", True),
+					d.getVar("MACHINE", True))
+
+	# IMAGE_FSTYPES
+	yocto_image_fstypes_to_elbe = {
+		"tar.gz":	"tar",
+		"hdddirect":	"",		# Implemented through <gpthd>
+		"cpio":		"cpio",
+		"squashfs":	"squashfs",
+	}
+
+	requested_images = d.getVar('IMAGE_FSTYPES', True)
+	if not requested_images:
+		requested_images = ""
+
+	# For easier debugging, always generate a tar.gz rootfs
+	elbe_packages = ["tar"]
+	for image in requested_images.split():
+		if not image in yocto_image_fstypes_to_elbe:
+			bb.error('%s: Unsupported image in IMAGE_FSTYPES: %s' %
+				 (pn , image))
+			bb.error('%s: The only supported IMAGE_FSTYPES are: %s' %
+				 (pn , [*yocto_image_fstypes_to_elbe.keys()]))
+			raise bb.BBHandledException()
+		package = yocto_image_fstypes_to_elbe[image]
+		if not package in elbe_packages:
+			elbe_packages.append(package)
+
+	elbe_hdd = { }
+	if "hdddirect" in requested_images:
+		error_template = '%s: Requested hdddirect in IMAGE_FSTYPES but %s was not set'
+		for (key, varname) in [('hdd_name', 'ELBE_HDD_NAME'),
+				       ('hdd_size', 'ELBE_HDD_SIZE'),
+				       ('hdd_grub_install', 'ELBE_HDD_GRUB_INSTALL'),
+				       ('hdd_partitions', 'ELBE_HDD_PARTITIONS')]:
+			val = d.getVar(varname, True)
+			if not val:
+				bb.error(error_template % (pn, varname))
+				raise bb.BBHandledException()
+			elbe_hdd[key] = val
+		elbe_hdd['hdd_partition_list'] = elbe_hdd['hdd_partitions'].split()
+		for partition in elbe_hdd['hdd_partition_list']:
+			if len(partition.split(',')) != 3:
+				bb.error('%s: Invalid ELBE_HDD_PARTITIONS format' % pn)
+				raise bb.BBHandledException()
 %>
 
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
@@ -63,10 +113,51 @@
                 <passwd>${d.getVar("ELBE_PASSWORD", True)}foo</passwd>
                 <console>${d.getVar("SERIAL_CONSOLE", True)}</console>
 		<package>
+			% if "tar" in elbe_packages:
 			<tar>
-                        <name>${d.getVar('ELBE_PACKAGE_ARCH', True)}-${d.getVar("ELBE_DISTRO", True)}-${d.getVar("MACHINE", True)}.tgz</name>
+				<name>${packages_name_prefix}.tgz</name>
 			</tar>
+			%endif
+
+			%if "cpio" in elbe_packages:
+			<cpio>
+				<name>${packages_name_prefix}.cpio</name>
+			</cpio>
+			%endif
+
+			%if "squashfs" in elbe_packages:
+			<squashfs>
+				<name>${packages_name_prefix}.squash</name>
+			</squashfs>
+			%endif
 		</package>
+
+		%if elbe_hdd:
+		<images>
+			<gpthd>
+				<name>${elbe_hdd['hdd_name']}</name>
+				<size>${elbe_hdd['hdd_size']}</size>
+				%if elbe_hdd['hdd_grub_install'] == "true":
+					<grub-install/>
+				%endif
+				%for partition in elbe_hdd['hdd_partition_list']:
+					% for (size, label, flags) in [tuple(partition.split(','))]:
+					<partition>
+						<size>${size}</size>
+						<label>${label}</label>
+						%if "bootable" in flags:
+						<bootable>true</bootable>
+						%endif
+						%if "biosgrub" in flags:
+						<biosgrub>true</biosgrub>
+						%endif
+					</partition>
+					%endfor
+				%endfor
+			</gpthd>
+		</images>
+		%endif
+
 		<norecommend />
 		<finetuning>
 			<rm>/var/cache/apt/archives/*.deb</rm>
