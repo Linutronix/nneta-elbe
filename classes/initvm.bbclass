@@ -4,12 +4,14 @@ inherit native
 
 ELBE_INITVM_PRIMARY_HOST ?= "${ELBE_PRIMARY_HOST}"
 ELBE_INITVM_PRIMARY_PATH ?= "${ELBE_PRIMARY_PATH}"
-ELBE_INITVM_SIZE ?= "20G"
-ELBE_INITVM_MEM ?= "1G"
-ELBE_INITVM_SWAP_SIZE ?= "0"
+ELBE_INITVM_SIZE ?= "80G"
+ELBE_INITVM_MEM ?= "16G"
+ELBE_INITVM_SWAP_SIZE ?= "10GiB"
 
-ELBE_INITVM_URLLIST ?= "http://debian.linutronix.de/elbe-testing,jessie,main,http://debian.linutronix.de/elbe-testing/elbe-repo.pub \
-                        http://debian.linutronix.de/elbe-common,jessie,main,http://debian.linutronix.de/elbe-testing/elbe-repo.pub"
+ELBE_INITVM_URLLIST ?= "http://security.debian.org/debian-security,stretch/updates,main \
+			http://debian.linutronix.de/elbe,stretch,main,http://debian.linutronix.de/elbe/elbe-repo.pub \
+			http://debian.linutronix.de/elbe-common,stretch,main,http://debian.linutronix.de/elbe-common/elbe-repo.pub \
+			http://ftp.de.debian.org/debian,stretch-backports,main"
 
 python do_configure() {
     write_mako_template(d, "initvm.xml")
