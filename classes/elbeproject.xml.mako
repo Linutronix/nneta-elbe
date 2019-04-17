@@ -72,6 +72,25 @@
 			if len(partition.split(',')) != 3:
 				bb.error('%s: Invalid ELBE_HDD_PARTITIONS format' % pn)
 				raise bb.BBHandledException()
+
+	# [ (label, mountpoint, fstype, tune2fs_flags), ... ]
+	# tune2fs_flags can be an empty string
+	elbe_fstab_by_label = [ ]
+
+	fstab_dict = d.getVarFlags("ELBE_FSTAB_ENTRY_BY_LABEL")
+	for label in fstab_dict:
+		# Ignore variable documentation, which's done in bitbake as a flag
+		if label == 'doc':
+			continue
+
+		entry = fstab_dict[label].split(',')
+		if len(entry) != 3:
+			bb.error('%s: Invalid ELBE_FSTAB_ENTRY_BY_LABEL[%s] format' %
+				 (pn, label))
+			raise bb.BBHandledException()
+
+		(mountpoint, fstype, tune2fs_flags) = (entry[0], entry[1], entry[2])
+		elbe_fstab_by_label += [ (label, mountpoint, fstype, tune2fs_flags) ]
 %>
 
 <ns0:RootFileSystem xmlns:ns0="https://www.linutronix.de/projects/Elbe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" created="2009-05-20T08:50:56" revision="6" xsi:schemaLocation="https://www.linutronix.de/projects/Elbe dbsfed.xsd">
@@ -156,6 +175,23 @@
 				%endfor
 			</gpthd>
 		</images>
+		%endif
+
+		%if elbe_fstab_by_label:
+		<fstab>
+			%for (label, mountpoint, fstype, flags) in elbe_fstab_by_label:
+			<bylabel>
+				<label>${label}</label>
+				<mountpoint>${mountpoint}</mountpoint>
+				<fs>
+					<type>${fstype}</type>
+					%if flags:
+					<tune2fs>${flags}</tune2fs>
+					%endif
+				</fs>
+			</bylabel>
+			%endfor
+		</fstab>
 		%endif
 
 		<norecommend />

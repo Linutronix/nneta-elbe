@@ -15,6 +15,9 @@ ELBE_HDD_PARTITIONS = "		\
 	remain,rfs,		\
 "
 
+ELBE_FSTAB_ENTRY_BY_LABEL[rfs] = "/,ext4,-i 0"
+ELBE_FSTAB_ENTRY_BY_LABEL[uefi] = "/boot/efi,vfat,"
+
 IMAGE_INSTALL += "		\
 	bash			\
 	grub-efi-amd64-bin	\
